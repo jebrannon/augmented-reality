@@ -1,0 +1,21 @@
+<!-- html/pledge/page.html -->
+<div id="pledgePage" class="pledge" >
+
+	<div class="row header">
+
+		<div class="col profile-image">
+			<img src="<%= pledge.get('image').url %>"/>
+		</div>
+
+		<div class="col goals">
+			<h2>My Goals</h2>
+			<p><strong>Target: </strong><%= pledge.get('fundraisingTarget') %></p>
+			<p><strong>Total: </strong><%= pledge.get('grandTotalRaisedExcludingGiftAid') %></p>
+			<p class="percentage"><span><%= pledge.get('totalRaisedPercentageOfFundraisingTarget') %>% </span>towards my target</p>
+			<a class="donate-button" href="http://www.justgiving.com/<%= pledge.get('pageShortName') %>/donate">DONATE</a>
+		</div>
+
+	</div>
+
+	<div class="story"><%= pledge.get('story') %></div>
+</div>  
