@@ -20,8 +20,7 @@ define([
 
 
 				window.addEventListener('deviceorientation', function(event) {
-
-					console.log(event)
+					console.log('alpha: ', event.alpha, ' - beta: ', event.beta, ' - gamma: ', event.gamma)
 				}, false);
 			},
 			render: function(where) {
