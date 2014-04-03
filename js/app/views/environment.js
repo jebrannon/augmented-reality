@@ -153,9 +153,6 @@ define([
 			    translate += this._image.now.y + 'px';
 			  }
 
-			  //  update event
-			  this._delegate[GyroPanorama.DID_PAN].call(this._delegate, {diffX: Math.abs(diffX), diffY: Math.abs(diffY) });
-
 			  //  close and update
 			  this._image.el.style.webkitTransform = translate + ')';
 
