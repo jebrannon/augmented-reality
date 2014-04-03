@@ -28,17 +28,17 @@ define([
 				console.log('where : ', where, this.el);
 
 
-			 if(element.requestFullscreen) {
-			    element.requestFullscreen();
+			 if(this.el.requestFullscreen) {
+			    this.el.requestFullscreen();
 			    console.log('requestFullscreen');
-			  } else if(element.mozRequestFullScreen) {
-			    element.mozRequestFullScreen();
+			  } else if(this.el.mozRequestFullScreen) {
+			    this.el.mozRequestFullScreen();
 			    console.log('mozRequestFullScreen');
-			  } else if(element.webkitRequestFullscreen) {
-			    element.webkitRequestFullscreen();
+			  } else if(this.el.webkitRequestFullscreen) {
+			    this.el.webkitRequestFullscreen();
 			    console.log('webkitRequestFullscreen');
-			  } else if(element.msRequestFullscreen) {
-			    element.msRequestFullscreen();
+			  } else if(this.el.msRequestFullscreen) {
+			    this.el.msRequestFullscreen();
 			    console.log('msRequestFullscreen');
 			  } else {
 			  	console.log('unsupported!!!');
