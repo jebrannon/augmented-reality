@@ -27,6 +27,9 @@ define([
 				console.log('where : ', where)
 
 
+				this.el.requestFullscreen();
+
+
 				// var that = this;
 				// this.pages.fetch({
 				// 	success: function () {
