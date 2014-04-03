@@ -71,15 +71,19 @@ define([
 
 					 if(this.el.requestFullscreen) {
 					    this.el.requestFullscreen();
+					    this._isFullscreen = true;
 					    console.log('requestFullscreen');
 					  } else if(this.el.mozRequestFullScreen) {
 					    this.el.mozRequestFullScreen();
+					    this._isFullscreen = true;
 					    console.log('mozRequestFullScreen');
 					  } else if(this.el.webkitRequestFullscreen) {
 					    this.el.webkitRequestFullscreen();
+					    this._isFullscreen = true;
 					    console.log('webkitRequestFullscreen');
 					  } else if(this.el.msRequestFullscreen) {
 					    this.el.msRequestFullscreen();
+					    this._isFullscreen = true;
 					    console.log('msRequestFullscreen');
 					  } else {
 					  	console.log('unsupported!!!');
@@ -89,12 +93,15 @@ define([
 					else {
 					 if(this.el.exitFullscreen) {
 					    this.el.exitFullscreen();
+					    this._isFullscreen = false;
 					    console.log('exitFullscreen');
 					  } else if(this.el.mozCancelFullScreen) {
 					    this.el.mozCancelFullScreen();
+					    this._isFullscreen = false;
 					    console.log('mozCancelFullScreen');
 					  } else if(this.el.webkitExitFullscreen) {
 					    this.el.webkitExitFullscreen();
+					    this._isFullscreen = false;
 					    console.log('webkitExitFullscreen');
 					  } else {
 					  	console.log('unsupported!!!');
