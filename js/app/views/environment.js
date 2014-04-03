@@ -10,9 +10,10 @@ define([
 		var pledgeView = Backbone.View.extend({
 			el: '#environment',
 			events: {
-				"click": "open"
+				"click": "handleEvent"
 			},
 			initialize: function() {
+				this._isFullscreen = false;
 				// var charityId = Config.justgiving.charityId;
 				// var eventId = Config.justgiving.eventId;
 				// var limit = Config.justgiving.limit;
@@ -25,11 +26,6 @@ define([
 			},
 			render: function(where) {
 				console.log('where : ', where, this.el)
-
-
-				this.el.requestFullscreen();
-
-
 				// var that = this;
 				// this.pages.fetch({
 				// 	success: function () {
@@ -48,13 +44,16 @@ define([
 				// 	}
 				// });
 			},
-			open: function(e) {
-				// if (e.target && e.target.getAttribute('data-app-cid')) {
-				// 	var that = this;
-				// 	var cid = e.target.getAttribute('data-app-cid');
-				// 	var model = this.pages.get(cid);
-				// 	this.expand(model);
-				// }
+			handleEvent: function(e) {
+				if (e.target && e.target.getAttribute('data-app-action')) {
+					if (!this._isFullscreen) {
+						this.el.requestFullscreen();
+					}
+					else {
+						this.el.exitFullscreen();
+					}
+					
+				}
 			},
 			output: function() {
 				// $('#loading').hide();
