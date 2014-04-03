@@ -68,10 +68,37 @@ define([
 			handleEvent: function(e) {
 				if (e.target && e.target.getAttribute('data-app-action')) {
 					if (!this._isFullscreen) {
-						this.el.requestFullscreen();
+
+					 if(this.el.requestFullscreen) {
+					    this.el.requestFullscreen();
+					    console.log('requestFullscreen');
+					  } else if(this.el.mozRequestFullScreen) {
+					    this.el.mozRequestFullScreen();
+					    console.log('mozRequestFullScreen');
+					  } else if(this.el.webkitRequestFullscreen) {
+					    this.el.webkitRequestFullscreen();
+					    console.log('webkitRequestFullscreen');
+					  } else if(this.el.msRequestFullscreen) {
+					    this.el.msRequestFullscreen();
+					    console.log('msRequestFullscreen');
+					  } else {
+					  	console.log('unsupported!!!');
+					  }
+
 					}
 					else {
-						this.el.exitFullscreen();
+					 if(this.el.exitFullscreen) {
+					    this.el.exitFullscreen();
+					    console.log('exitFullscreen');
+					  } else if(this.el.mozCancelFullScreen) {
+					    this.el.mozCancelFullScreen();
+					    console.log('mozCancelFullScreen');
+					  } else if(this.el.webkitExitFullscreen) {
+					    this.el.webkitExitFullscreen();
+					    console.log('webkitExitFullscreen');
+					  } else {
+					  	console.log('unsupported!!!');
+					  }
 					}
 					
 				}
