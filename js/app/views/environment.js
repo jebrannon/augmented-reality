@@ -24,7 +24,7 @@ define([
 				}, false);
 			},
 			render: function(where) {
-				console.log('where : ', where)
+				console.log('where : ', where, this.el)
 
 
 				this.el.requestFullscreen();
