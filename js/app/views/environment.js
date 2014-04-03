@@ -25,7 +25,28 @@ define([
 				}, false);
 			},
 			render: function(where) {
-				console.log('where : ', where, this.el)
+				console.log('where : ', where, this.el);
+
+
+			 if(element.requestFullscreen) {
+			    element.requestFullscreen();
+			    console.log('requestFullscreen');
+			  } else if(element.mozRequestFullScreen) {
+			    element.mozRequestFullScreen();
+			    console.log('mozRequestFullScreen');
+			  } else if(element.webkitRequestFullscreen) {
+			    element.webkitRequestFullscreen();
+			    console.log('webkitRequestFullscreen');
+			  } else if(element.msRequestFullscreen) {
+			    element.msRequestFullscreen();
+			    console.log('msRequestFullscreen');
+			  } else {
+			  	console.log('unsupported!!!');
+			  }
+
+
+
+
 				// var that = this;
 				// this.pages.fetch({
 				// 	success: function () {
