@@ -128,7 +128,7 @@ define([
 			},
 			handleDeviceOrientation: function(event) {
 
-				console.log(event)
+				
 // gamma is the left-to-right tilt in degrees, where right is positive
                     var tiltLR = event.gamma;
 
@@ -140,6 +140,9 @@ define([
                     
                     // deviceorientation does not provide this data
                     var motUD = null;
+
+console.log(tiltLR, tiltFB, dir, motUD)
+
 
                     this.moveTheEnvironment(tiltLR, tiltFB, dir, motUD);
   			// var z = Math.round(event.alpha);  //  0 > 360
