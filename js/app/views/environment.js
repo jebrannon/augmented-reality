@@ -162,11 +162,10 @@ define([
                 }else{
                     movelatitude = this._map.getCenter().lat() + 0;
                 }
-                // this._map.panTo(new google.maps.LatLng(movelatitude, moveLongitude));
-                this._map.panTo(moveLongitude, movelatitude);
+                this._map.panTo(new google.maps.LatLng(movelatitude, moveLongitude));
 
 
-                console.log(moveLongitude, movelatitude)
+                console.log(new google.maps.LatLng(movelatitude, moveLongitude))
 			},
 			handleEvent: function(e) {
 				if (e.target && e.target.getAttribute('data-app-action')) {
