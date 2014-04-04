@@ -66,6 +66,7 @@ define([
 				    });
 				  }
 				});
+
 			},
 			getCustomPanoramaTileUrl: function(pano, zoom, tileX, tileY) {
 				  // Return a pano image given the panoID.
@@ -126,6 +127,8 @@ define([
 				  }
 			},
 			handleDeviceOrientation: function(event) {
+
+				console.log(event)
 // gamma is the left-to-right tilt in degrees, where right is positive
                     var tiltLR = event.gamma;
 
@@ -159,6 +162,9 @@ define([
                     movelatitude = this._map.getCenter().lat() + 0;
                 }
                 this._map.panTo(new google.maps.LatLng(movelatitude, moveLongitude));
+
+
+                console.log(moveLongitude, movelatitude)
 			},
 			handleEvent: function(e) {
 				if (e.target && e.target.getAttribute('data-app-action')) {
