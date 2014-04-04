@@ -141,8 +141,6 @@ define([
                     // deviceorientation does not provide this data
                     var motUD = null;
 
-console.log(tiltLR, tiltFB, dir, motUD)
-
 
                     this.moveTheEnvironment(tiltLR, tiltFB, dir, motUD);
   			// var z = Math.round(event.alpha);  //  0 > 360
@@ -164,7 +162,8 @@ console.log(tiltLR, tiltFB, dir, motUD)
                 }else{
                     movelatitude = this._map.getCenter().lat() + 0;
                 }
-                this._map.panTo(new google.maps.LatLng(movelatitude, moveLongitude));
+                // this._map.panTo(new google.maps.LatLng(movelatitude, moveLongitude));
+                this._map.panTo(moveLongitude, movelatitude);
 
 
                 console.log(moveLongitude, movelatitude)
