@@ -159,8 +159,8 @@ define([
                 }
                 this._map.setPosition(new google.maps.LatLng(movelatitude, moveLongitude));
 
-
-                console.log(new google.maps.LatLng(movelatitude, moveLongitude))
+                
+                console.log(this._map.getPosition)
 			},
 			handleEvent: function(e) {
 				if (e.target && e.target.getAttribute('data-app-action')) {
