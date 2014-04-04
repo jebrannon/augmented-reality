@@ -31,13 +31,8 @@ define([
 				var mapOptions = {
 				    center: startLocation,
 				    zoom: 16,
-				    draggable: false,
-				    disableDoubleClickZoom: false,
-				    panControl: false,
-				    scrollwheel: false,
-				    streetViewControl: false,
-				    zoomControl: false,
-				    mapTypeControl: false
+				    enableCloseButton: false,
+				    zoomControlOptions: false
 				  };
 
 				// Set up the map and enable the Street View control.
@@ -162,7 +157,7 @@ define([
                 }else{
                     movelatitude = this._map.getCenter().lat() + 0;
                 }
-                this._map.panTo(new google.maps.LatLng(movelatitude, moveLongitude));
+                this._map.setPosition(new google.maps.LatLng(movelatitude, moveLongitude));
 
 
                 console.log(new google.maps.LatLng(movelatitude, moveLongitude))
