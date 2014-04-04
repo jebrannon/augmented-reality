@@ -141,7 +141,7 @@ define([
                     // deviceorientation does not provide this data
                     var motUD = null;
 
-                    this.moveTheEnvironment(tiltLR, tiltFB, dir, motionUD);
+                    this.moveTheEnvironment(tiltLR, tiltFB, dir, motUD);
   			// var z = Math.round(event.alpha);  //  0 > 360
   			// var y = Math.abs(Math.round(event.gamma));  //  -180 > 180
   			// this.updatePanoramaPositionGiro(z, y);
