@@ -14,6 +14,7 @@ define([
 			},
 			initialize: function() {
 				this._isFullscreen = false;
+				this._map = null;
 				this._panorama = null;
 			  // 
 			  var that = this;
@@ -29,12 +30,19 @@ define([
 			  var startLocation = new google.maps.LatLng(latitude, longitude);
 				var mapOptions = {
 				    center: startLocation,
-				    zoom: 16
+				    zoom: 16,
+				    draggable: false,
+				    disableDoubleClickZoom: false,
+				    panControl: false,
+				    scrollwheel: false,
+				    streetViewControl: false,
+				    zoomControl: false,
+				    mapTypeControl: false
 				  };
 
 				// Set up the map and enable the Street View control.
-				var map = new google.maps.Map(this.el, mapOptions);
-				this._panorama = map.getStreetView();
+				this._map = new google.maps.Map(this.el, mapOptions);
+				this._panorama = this._map.getStreetView();
 
 				// Set up Street View and initially set it visible. Register the custom panorama provider function.
 			 var panoOptions = {
@@ -47,19 +55,17 @@ define([
 				// Create a StreetViewService object.
 				var streetviewService = new google.maps.StreetViewService();
 
-
 				// Compute the nearest panorama to the Google Sydney office using the service and store that pano ID.
 				var radius = 50;
 				streetviewService.getPanoramaByLocation(startLocation, radius, function(result, status) {
-				    if (status == google.maps.StreetViewStatus.OK) {
-				      // We'll monitor the links_changed event to check if the current
-				      // pano is either a custom pano or our entry pano.
-				      google.maps.event.addListener(that._panorama, 'links_changed', function() {
-				        that.createCustomLinks(result.location.pano);
-				      });
-				    }
-				  });
-				
+				  if (status == google.maps.StreetViewStatus.OK) {
+				    // We'll monitor the links_changed event to check if the current
+				    // pano is either a custom pano or our entry pano.
+				    google.maps.event.addListener(that._panorama, 'links_changed', function() {
+				      that.createCustomLinks(result.location.pano);
+				    });
+				  }
+				});
 			},
 			getCustomPanoramaTileUrl: function(pano, zoom, tileX, tileY) {
 				  // Return a pano image given the panoID.
@@ -119,10 +125,40 @@ define([
 				      return;
 				  }
 			},
-			handleDeviceOrientation: function(e) {
-  			var z = Math.round(event.alpha);  //  0 > 360
-  			var y = Math.abs(Math.round(event.gamma));  //  -180 > 180
-  			this.updatePanoramaPositionGiro(z, y);
+			handleDeviceOrientation: function(event) {
+// gamma is the left-to-right tilt in degrees, where right is positive
+                    var tiltLR = event.gamma;
+
+// beta is the front-to-back tilt in degrees, where front is positive
+                    var tiltFB = event.beta;
+                    
+                    // alpha is the compass direction the device is facing in degrees
+                    var dir = event.alpha
+                    
+                    // deviceorientation does not provide this data
+                    var motUD = null;
+
+                    this.moveTheEnvironment(tiltLR, tiltFB, dir, motionUD);
+  			// var z = Math.round(event.alpha);  //  0 > 360
+  			// var y = Math.abs(Math.round(event.gamma));  //  -180 > 180
+  			// this.updatePanoramaPositionGiro(z, y);
+			},
+			moveTheEnvironment: function(tiltLR, tiltFB, dir, motionUD) {
+					var moveLongitude;
+          var movelatitude;
+
+            /*conditional statements to check there is a significant change in the device's state*/
+                if (Math.abs(Math.round(tiltLR)) > 3){
+                    moveLongitude = this._map.getCenter().lng() + (tiltLR*0.00001);
+                }else{
+                    moveLongitude =this._map.getCenter().lng() + 0;
+                }
+                if (Math.abs(Math.round(tiltFB)) > 3){
+                    movelatitude = this._map.getCenter().lat() + (tiltFB*-0.00001);
+                }else{
+                    movelatitude = this._map.getCenter().lat() + 0;
+                }
+                this._map.panTo(new google.maps.LatLng(movelatitude, moveLongitude));
 			},
 			handleEvent: function(e) {
 				if (e.target && e.target.getAttribute('data-app-action')) {
