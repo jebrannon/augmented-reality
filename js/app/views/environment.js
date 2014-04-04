@@ -8,71 +8,116 @@ define([
 	// 'text!html/pledge/page.html',
 	], function($, _, Backbone, Config) {
 		var pledgeView = Backbone.View.extend({
-			el: '#environment',
+			el: '#mapCanvas',
 			events: {
 				"click": "handleEvent"
 			},
 			initialize: function() {
 				this._isFullscreen = false;
-
-				//  Memory
-				this._recall = {};
-			  this._recall.giro = {};
-			  this._recall.giro.z = false;
-			  this._recall.giro.y = false;
-			  this._recall.touch = {};
-			  this._recall.touch.x = false;
-			  this._recall.touch.y = false;
-
-			  //  Image
-			  this._image = {};
-			  this._image.touchSensitivity = 1;
-			  this._image.giroSensitivity = 1;
-			  this._image.el = $(this.el).find('#panorama')[0];
-			  this._image.offset = {};
-			  this._image.offset.width = this._image.el.offsetWidth - this.el.offsetWidth;
-			  this._image.offset.height = this._image.el.offsetHeight- this.el.offsetHeight;
-			  this._image.ratio = {};
-			  this._image.ratio.z = Math.abs(this._image.offset.width / 360);
-			  this._image.ratio.y = Math.abs(this._image.offset.height / 180);
-			  this._image.orig = {};
-			  this._image.orig.x = this._image.el.offsetLeft;
-			  this._image.orig.y = this._image.el.offsetTop;
-			  this._image.now = {};
-			  this._image.now.x = 0;
-			  this._image.now.y = 0;
-			  this._image.limit = {};
-			  this._image.limit.left = Math.abs(this._image.orig.x);
-			  this._image.limit.right = -(this._image.offset.width - Math.abs(this._image.orig.x));
-			  this._image.limit.top = Math.abs(this._image.orig.y);
-			  this._image.limit.bottom = -(this._image.offset.height - Math.abs(this._image.orig.y));
-
+				this._panorama = null;
 			  // 
 			  var that = this;
 				window.addEventListener('deviceorientation', function(event) {
 					that.handleDeviceOrientation(event);
 				}, false);
 			},
-			render: function(where) {
-				console.log('where : ', where, this.el);
+			render: function(latitude, longitude) {
+				console.log('where : ', latitude, longitude);
+				var that = this;
 
-				// var that = this;
-				// this.pages.fetch({
-				// 	success: function () {
-				// 		var total = that.pages.length;
-				// 		var i = 0;
-				// 		that.pages.each(function(page) {
-				// 			page.fetch({
-				// 				success: function () {
-				// 					i++;
-				// 					if (i === total) {
-				// 						that.output();
-				// 					}
-				// 				}
-				// 			});
-				// 		})
-				// 	}
-				// });
+			  // The latlng of the entry point to the location
+			  var startLocation = new google.maps.LatLng(latitude, longitude);
+				var mapOptions = {
+				    center: startLocation,
+				    zoom: 16
+				  };
+
+				// Set up the map and enable the Street View control.
+				var map = new google.maps.Map(this.el, mapOptions);
+				this._panorama = map.getStreetView();
+
+				// Set up Street View and initially set it visible. Register the custom panorama provider function.
+			 var panoOptions = {
+			    position: startLocation,
+			    visible: true,
+			    panoProvider: that.getCustomPanorama
+			  };
+			  this._panorama.setOptions(panoOptions);
+
+				// Create a StreetViewService object.
+				var streetviewService = new google.maps.StreetViewService();
+
+
+				// Compute the nearest panorama to the Google Sydney office using the service and store that pano ID.
+				var radius = 50;
+				streetviewService.getPanoramaByLocation(startLocation, radius, function(result, status) {
+				    if (status == google.maps.StreetViewStatus.OK) {
+				      // We'll monitor the links_changed event to check if the current
+				      // pano is either a custom pano or our entry pano.
+				      google.maps.event.addListener(that._panorama, 'links_changed', function() {
+				        that.createCustomLinks(result.location.pano);
+				      });
+				    }
+				  });
+				
+			},
+			getCustomPanoramaTileUrl: function(pano, zoom, tileX, tileY) {
+				  // Return a pano image given the panoID.
+				  return 'images/panoReception1024-' + zoom + '-' + tileX + '-' +tileY + '.jpg';
+			},
+			getCustomPanorama: function(pano) {
+				  switch(pano) {
+				    case 'reception':
+				      return {
+				        location: {
+				          pano: 'reception',
+				          description: 'Google Sydney - Reception',
+				          latLng: new google.maps.LatLng(latitude, longitude)
+				        },
+				        links: [],
+				        // The text for the copyright control.
+				        copyright: 'Imagery (c) 2010 Google',
+				        // The definition of the tiles for this panorama.
+				        tiles: {
+				          tileSize: new google.maps.Size(1024, 512),
+				          worldSize: new google.maps.Size(2048, 1024),
+				          // The heading at the origin of the panorama tile set.
+				          centerHeading: 105,
+				          getTileUrl: getCustomPanoramaTileUrl
+				        }
+				      };
+				      break;
+				    default:
+				      return null;
+				  }
+			},
+			createCustomLinks: function(entryPanoId) {
+				  var links = this._panorama.getLinks();
+				  var panoId = this._panorama.getPano();
+
+				  switch(panoId) {
+				    case entryPanoId:
+				      // Adding a link in the view from the entrance of the building to
+				      // reception.
+				      links.push({
+				        heading: 25,
+				        description : 'Google Sydney',
+				        pano : 'reception'
+				      });
+				      break;
+				    case 'reception':
+				      // Adding a link in the view from the entrance of the office
+				      // with an arrow pointing at 100 degrees, with a text of 'Exit'
+				      // and loading the street entrance of the building pano on click.
+				      links.push({
+				        heading: 195,
+				        description : 'Exit',
+				        pano : entryPanoId
+				      });
+				      break;
+				    default:
+				      return;
+				  }
 			},
 			handleDeviceOrientation: function(e) {
   			var z = Math.round(event.alpha);  //  0 > 360

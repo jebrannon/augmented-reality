@@ -1,20 +1,7 @@
-body {
-	margin: 0;
-}
-
-#environment {
-	width: 100%;
+html,
+body,
+#mapCanvas {
 	height: 100%;
-	background-color: blue;
-}
-
-#environment .fullscreen-button {
-	padding: 10px;
-	background-color: red;
-	color: white;
-	display: inline-block;
-}
-
-#environment .fullscreen-button:hover {
-	background-color: green;
+	margin: 0px;
+	padding: 0px
 }

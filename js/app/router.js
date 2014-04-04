@@ -10,7 +10,7 @@ define([
 				'*actions': 'index'
 			},
 			index: function() {
-				environment.render('italy');
+				environment.render(36.740588, -5.167985);
 			}
 		});
 		var init = function() {
