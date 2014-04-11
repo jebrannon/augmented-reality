@@ -8,7 +8,7 @@ define([
 	// 'text!html/pledge/page.html',
 	], function($, _, Backbone, Config) {
 		var pledgeView = Backbone.View.extend({
-			el: '#mapCanvas',
+			el: '#pano',
 			events: {
 				"click": "handleEvent"
 			},
@@ -23,147 +23,90 @@ define([
 				}, false);
 			},
 			render: function(latitude, longitude) {
-				console.log('where : ', latitude, longitude);
-				var that = this;
+				var cafe = new google.maps.LatLng(latitude, longitude);
 
-			  // The latlng of the entry point to the location
-			  var startLocation = new google.maps.LatLng(latitude, longitude);
-				var mapOptions = {
-				    center: startLocation,
-				    zoom: 16,
-				    enableCloseButton: false,
-				    zoomControlOptions: false
+				function initialise() {
+
+				  var panoramaOptions = {
+				    position: cafe,
+				    pov: {
+				      heading: 180,
+				      pitch: 0
+				    },
+				    visible: true
 				  };
+				  var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+				  google.maps.event.addListener(panorama, 'pano_changed', function() {
+				      var panoCell = document.getElementById('pano_cell');
+				      panoCell.innerHTML = panorama.getPano();
+				  });
 
-				// Set up the map and enable the Street View control.
-				this._map = new google.maps.Map(this.el, mapOptions);
-				this._panorama = this._map.getStreetView();
-
-				// Set up Street View and initially set it visible. Register the custom panorama provider function.
-			 var panoOptions = {
-			    position: startLocation,
-			    visible: true,
-			    panoProvider: that.getCustomPanorama
-			  };
-			  this._panorama.setOptions(panoOptions);
-
-				// Create a StreetViewService object.
-				var streetviewService = new google.maps.StreetViewService();
-
-				// Compute the nearest panorama to the Google Sydney office using the service and store that pano ID.
-				var radius = 50;
-				streetviewService.getPanoramaByLocation(startLocation, radius, function(result, status) {
-				  if (status == google.maps.StreetViewStatus.OK) {
-				    // We'll monitor the links_changed event to check if the current
-				    // pano is either a custom pano or our entry pano.
-				    google.maps.event.addListener(that._panorama, 'links_changed', function() {
-				      that.createCustomLinks(result.location.pano);
-				    });
-				  }
-				});
-
-			},
-			getCustomPanoramaTileUrl: function(pano, zoom, tileX, tileY) {
-				  // Return a pano image given the panoID.
-				  return 'images/panoReception1024-' + zoom + '-' + tileX + '-' +tileY + '.jpg';
-			},
-			getCustomPanorama: function(pano) {
-				  switch(pano) {
-				    case 'reception':
-				      return {
-				        location: {
-				          pano: 'reception',
-				          description: 'Google Sydney - Reception',
-				          latLng: new google.maps.LatLng(latitude, longitude)
-				        },
-				        links: [],
-				        // The text for the copyright control.
-				        copyright: 'Imagery (c) 2010 Google',
-				        // The definition of the tiles for this panorama.
-				        tiles: {
-				          tileSize: new google.maps.Size(1024, 512),
-				          worldSize: new google.maps.Size(2048, 1024),
-				          // The heading at the origin of the panorama tile set.
-				          centerHeading: 105,
-				          getTileUrl: getCustomPanoramaTileUrl
-				        }
+				  google.maps.event.addListener(panorama, 'links_changed', function() {
+				      var linksTable = document.getElementById('links_table');
+				      while(linksTable.hasChildNodes()) {
+				        linksTable.removeChild(linksTable.lastChild);
 				      };
-				      break;
-				    default:
-				      return null;
-				  }
-			},
-			createCustomLinks: function(entryPanoId) {
-				  var links = this._panorama.getLinks();
-				  var panoId = this._panorama.getPano();
+				      var links =  panorama.getLinks();
+				      for (var i in links) {
+				        var row = document.createElement('tr');
+				        linksTable.appendChild(row);
+				        var labelCell = document.createElement('td');
+				        labelCell.innerHTML = '<b>Link: ' + i + '</b>';
+				        var valueCell = document.createElement('td');
+				        valueCell.innerHTML = links[i].description;
+				        linksTable.appendChild(labelCell);
+				        linksTable.appendChild(valueCell);
+				      }
+				  });
 
-				  switch(panoId) {
-				    case entryPanoId:
-				      // Adding a link in the view from the entrance of the building to
-				      // reception.
-				      links.push({
-				        heading: 25,
-				        description : 'Google Sydney',
-				        pano : 'reception'
-				      });
-				      break;
-				    case 'reception':
-				      // Adding a link in the view from the entrance of the office
-				      // with an arrow pointing at 100 degrees, with a text of 'Exit'
-				      // and loading the street entrance of the building pano on click.
-				      links.push({
-				        heading: 195,
-				        description : 'Exit',
-				        pano : entryPanoId
-				      });
-				      break;
-				    default:
-				      return;
-				  }
+				  google.maps.event.addListener(panorama, 'position_changed', function() {
+				      var positionCell = document.getElementById('position_cell');
+				      positionCell.firstChild.nodeValue = panorama.getPosition() + '';
+
+				      document.getElementById('button').addEventListener('click', function() {
+				      	console.log('clicked');
+					      panorama.setPov({
+								    heading: 100,
+								    pitch:50}
+								  );
+				      })
+				  });
+
+				  google.maps.event.addListener(panorama, 'pov_changed', function() {
+				      var headingCell = document.getElementById('heading_cell');
+				      var pitchCell = document.getElementById('pitch_cell');
+				      headingCell.firstChild.nodeValue = panorama.getPov().heading + '';
+				      pitchCell.firstChild.nodeValue = panorama.getPov().pitch + '';
+				  });
+				}
+
+				initialise();
 			},
 			handleDeviceOrientation: function(event) {
 
 				
-// gamma is the left-to-right tilt in degrees, where right is positive
-                    var tiltLR = event.gamma;
+				// gamma is the left-to-right tilt in degrees, where right is positive
+        var tiltLR = event.gamma;
 
-// beta is the front-to-back tilt in degrees, where front is positive
-                    var tiltFB = event.beta;
+				// beta is the front-to-back tilt in degrees, where front is positive
+        var tiltFB = event.beta;
                     
-                    // alpha is the compass direction the device is facing in degrees
-                    var dir = event.alpha
+        // alpha is the compass direction the device is facing in degrees
+        var dir = event.alpha
                     
-                    // deviceorientation does not provide this data
-                    var motUD = null;
+        // deviceorientation does not provide this data
+        var motUD = null;
 
 
-                    this.moveTheEnvironment(tiltLR, tiltFB, dir, motUD);
-  			// var z = Math.round(event.alpha);  //  0 > 360
-  			// var y = Math.abs(Math.round(event.gamma));  //  -180 > 180
-  			// this.updatePanoramaPositionGiro(z, y);
-			},
-			moveTheEnvironment: function(tiltLR, tiltFB, dir, motionUD) {
-					var moveLongitude;
-          var movelatitude;
-
-            /*conditional statements to check there is a significant change in the device's state*/
-                if (Math.abs(Math.round(tiltLR)) > 3){
-                    moveLongitude = this._map.getCenter().lng() + (tiltLR*0.00001);
-                }else{
-                    moveLongitude =this._map.getCenter().lng() + 0;
-                }
-                if (Math.abs(Math.round(tiltFB)) > 3){
-                    movelatitude = this._map.getCenter().lat() + (tiltFB*-0.00001);
-                }else{
-                    movelatitude = this._map.getCenter().lat() + 0;
-                }
-                this._map.setPosition(new google.maps.LatLng(movelatitude, moveLongitude));
-
-                
-                console.log(this._map.getPosition)
+        // this.moveTheEnvironment(tiltLR, tiltFB, dir, motUD);
 			},
 			handleEvent: function(e) {
+				
+				// console.log('e);
 				if (e.target && e.target.getAttribute('data-app-action')) {
+
+
+
 					// if (!this._isFullscreen) {
 
 					//  if(this.el.requestFullscreen) {
