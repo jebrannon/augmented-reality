@@ -10,55 +10,56 @@ define([
 			events: {
 				"click": "handleEvent"
 			},
+			_location: null,
+			_map: null,
+			_panorama: null,
+			_isFullscreen: false,
 			initialize: function() {
-				this._isFullscreen = false;
-				this._map = null;
-				this._panorama = null;
-			  // 
 			  var that = this;
 				window.addEventListener('deviceorientation', function(event) {
 					that.handleDeviceOrientation(event);
 				}, false);
 			},
 			render: function(Model) {
-				var cafe = new google.maps.LatLng(Model.get('latitude'), Model.get('longitude'));
+				this._location = Model;
+				this._map = new google.maps.LatLng(Model.get('latitude'), Model.get('longitude'));
+				var that = this;
+				var options = {
+					position: this._map,
+					pov: {
+						heading: Model.get('heading'),
+						pitch: Model.get('pitch'),
+					},
+					visible: true,
+				};
+				var panorama = new google.maps.StreetViewPanorama(this.el, options);
 
-				  var panoramaOptions = {
-				    position: cafe,
-				    pov: {
-				      heading: Model.get('heading'),
-				      pitch: Model.get('pitch')
-				    },
-				    visible: true
-				  };
+				google.maps.event.addListener(panorama, 'pano_changed', function() {
+					that._location.set('panid', panorama.getPano());
+				  that.output();
+				});
 
-				  var panorama = new google.maps.StreetViewPanorama(this.el, panoramaOptions);
-				  google.maps.event.addListener(panorama, 'pano_changed', function() {
-				      var panoCell = document.getElementById('pano_cell');
-				      panoCell.innerHTML = panorama.getPano();
-				  });
+				google.maps.event.addListener(panorama, 'links_changed', function() {
+				      // var linksTable = document.getElementById('links_list');
+				      // while(linksTable.hasChildNodes()) {
+				      //   linksTable.removeChild(linksTable.lastChild);
+				      // };
+				      // var links =  panorama.getLinks();
+				      // for (var i in links) {
+				      //   var row = document.createElement('tr');
+				      //   linksTable.appendChild(row);
+				      //   var labelCell = document.createElement('td');
+				      //   labelCell.innerHTML = '<b>Link: ' + i + '</b>';
+				      //   var valueCell = document.createElement('td');
+				      //   valueCell.innerHTML = links[i].description;
+				      //   linksTable.appendChild(labelCell);
+				      //   linksTable.appendChild(valueCell);
+				      // }
+				});
 
-				  google.maps.event.addListener(panorama, 'links_changed', function() {
-				      var linksTable = document.getElementById('links_list');
-				      while(linksTable.hasChildNodes()) {
-				        linksTable.removeChild(linksTable.lastChild);
-				      };
-				      var links =  panorama.getLinks();
-				      for (var i in links) {
-				        var row = document.createElement('tr');
-				        linksTable.appendChild(row);
-				        var labelCell = document.createElement('td');
-				        labelCell.innerHTML = '<b>Link: ' + i + '</b>';
-				        var valueCell = document.createElement('td');
-				        valueCell.innerHTML = links[i].description;
-				        linksTable.appendChild(labelCell);
-				        linksTable.appendChild(valueCell);
-				      }
-				  });
-
-				  google.maps.event.addListener(panorama, 'position_changed', function() {
-				      var positionCell = document.getElementById('position_cell');
-				      positionCell.firstChild.nodeValue = panorama.getPosition() + '';
+				google.maps.event.addListener(panorama, 'position_changed', function() {
+				      // var positionCell = document.getElementById('position_cell');
+				      // positionCell.firstChild.nodeValue = panorama.getPosition() + '';
 
 				      // document.getElementById('button').addEventListener('click', function() {
 				      // 	console.log('clicked');
@@ -67,26 +68,19 @@ define([
 								  //   pitch:50}
 								  // );
 				      // })
-				  });
+				});
 
-				  google.maps.event.addListener(panorama, 'pov_changed', function() {
-				      var headingCell = document.getElementById('heading_cell');
-				      var pitchCell = document.getElementById('pitch_cell');
-				      headingCell.firstChild.nodeValue = panorama.getPov().heading + '';
-				      pitchCell.firstChild.nodeValue = panorama.getPov().pitch + '';
-				  });
-
-				  // console.log(DataModel)
-
-				  // $(this.el).append(_.template(DataTemplate, {data: LocationsCollection}));
-				  $(this.el).append(_.template(DataTemplate));
+				google.maps.event.addListener(panorama, 'pov_changed', function() {
+					that._location.set('heading', panorama.getPov().heading);
+					that._location.set('pitch', panorama.getPov().pitch);
+					that.output();
+				});
 			},
 			handleDeviceOrientation: function(event) {
 				console.log('gamma', event.gamma);
 				console.log('beta', event.beta);
 				console.log('alpha', event.alpha);
 				console.log('----');
-
 			},
 			handleEvent: function(e) {
 				
@@ -176,7 +170,8 @@ define([
 			},
 			output: function() {
 				// $('#loading').hide();
-				// $(this.el).append(_.template(ItemTemplate, {pledges: this.pages.models}));
+				$('#streetViewData').remove();
+				$(this.el).append(_.template(DataTemplate, {data: this._location}));
 			},
 			expand: function(model) {
 				// if ($('#pledgePage').length > 0) {

@@ -1,17 +1,10 @@
 <!-- html/streetView/data.html -->
-<div class="street-view-data">
+<div id="streetViewData" class="street-view-data">
   <ul>
-    <li><b>Position:</b><span id="position_cell">&nbsp;</span></li>
-    <li><b>POV Heading:</b><span id="heading_cell">270</span></li>
-    <li><b>POV Pitch:</b><span id="pitch_cell">0.0</span></li>
-    <li><b>Pano ID:</b><span id="pano_cell">&nbsp;</span></li>
+    <li><b>Position:</b>(<%= data.get('latitude') %>, <%= data.get('longitude') %>)</li>
+    <li><b>Pano ID:</b><%= data.get('panid') %></li>
+    <li><b>POV Heading:</b><%= data.get('heading') %></li>
+    <li><b>POV Pitch:</b><%= data.get('pitch') %></li>
   </ul>
   <ul id="links_list"></ul>
-
-  <ul>
-    <li><b>Position:</b></li>
-    <li><b>Pano ID:</b></li>
-    <li><b>POV Heading:</b></li>
-    <li><b>POV Pitch:</b></li>
-  </ul>
 </div>
