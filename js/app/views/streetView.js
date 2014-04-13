@@ -3,12 +3,10 @@ define([
 	'underscore',
 	'backbone',
 	'app/config',
-	// 'app/collections/pages',
-	// 'text!html/pledge/item.html',
-	// 'text!html/pledge/page.html',
-	], function($, _, Backbone, Config) {
-		var pledgeView = Backbone.View.extend({
-			el: '#pano',
+	'text!html/streetView/data.html',
+	], function($, _, Backbone, Config, DataTemplate) {
+		var streetView = Backbone.View.extend({
+			el: '#streetView',
 			events: {
 				"click": "handleEvent"
 			},
@@ -22,27 +20,26 @@ define([
 					that.handleDeviceOrientation(event);
 				}, false);
 			},
-			render: function(latitude, longitude) {
-				var cafe = new google.maps.LatLng(latitude, longitude);
-
-				function initialise() {
+			render: function(Model) {
+				var cafe = new google.maps.LatLng(Model.get('latitude'), Model.get('longitude'));
 
 				  var panoramaOptions = {
 				    position: cafe,
 				    pov: {
-				      heading: 180,
-				      pitch: 0
+				      heading: Model.get('heading'),
+				      pitch: Model.get('pitch')
 				    },
 				    visible: true
 				  };
-				  var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+
+				  var panorama = new google.maps.StreetViewPanorama(this.el, panoramaOptions);
 				  google.maps.event.addListener(panorama, 'pano_changed', function() {
 				      var panoCell = document.getElementById('pano_cell');
 				      panoCell.innerHTML = panorama.getPano();
 				  });
 
 				  google.maps.event.addListener(panorama, 'links_changed', function() {
-				      var linksTable = document.getElementById('links_table');
+				      var linksTable = document.getElementById('links_list');
 				      while(linksTable.hasChildNodes()) {
 				        linksTable.removeChild(linksTable.lastChild);
 				      };
@@ -63,13 +60,13 @@ define([
 				      var positionCell = document.getElementById('position_cell');
 				      positionCell.firstChild.nodeValue = panorama.getPosition() + '';
 
-				      document.getElementById('button').addEventListener('click', function() {
-				      	console.log('clicked');
-					      panorama.setPov({
-								    heading: 100,
-								    pitch:50}
-								  );
-				      })
+				      // document.getElementById('button').addEventListener('click', function() {
+				      // 	console.log('clicked');
+					     //  panorama.setPov({
+								  //   heading: 100,
+								  //   pitch:50}
+								  // );
+				      // })
 				  });
 
 				  google.maps.event.addListener(panorama, 'pov_changed', function() {
@@ -78,27 +75,18 @@ define([
 				      headingCell.firstChild.nodeValue = panorama.getPov().heading + '';
 				      pitchCell.firstChild.nodeValue = panorama.getPov().pitch + '';
 				  });
-				}
 
-				initialise();
+				  // console.log(DataModel)
+
+				  // $(this.el).append(_.template(DataTemplate, {data: LocationsCollection}));
+				  $(this.el).append(_.template(DataTemplate));
 			},
 			handleDeviceOrientation: function(event) {
+				console.log('gamma', event.gamma);
+				console.log('beta', event.beta);
+				console.log('alpha', event.alpha);
+				console.log('----');
 
-				
-				// gamma is the left-to-right tilt in degrees, where right is positive
-        var tiltLR = event.gamma;
-
-				// beta is the front-to-back tilt in degrees, where front is positive
-        var tiltFB = event.beta;
-                    
-        // alpha is the compass direction the device is facing in degrees
-        var dir = event.alpha
-                    
-        // deviceorientation does not provide this data
-        var motUD = null;
-
-
-        // this.moveTheEnvironment(tiltLR, tiltFB, dir, motUD);
 			},
 			handleEvent: function(e) {
 				
@@ -198,5 +186,5 @@ define([
 			}
 		});
 		
-		return new pledgeView;
+		return new streetView;
 	});

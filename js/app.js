@@ -26,7 +26,6 @@ require.config({
 require(['app/router', 'app/config', 'gmaps'], function(Router, Config, GoogleMapsLoader) {
     GoogleMapsLoader.done(function(){
        Router.init();
-
      }).fail(function(){ 
        console.error("ERROR: Google maps library failed to load");
      });
