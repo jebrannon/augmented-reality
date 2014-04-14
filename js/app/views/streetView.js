@@ -56,10 +56,6 @@ define([
 				this._isLoaded = false;
 			},
 			handleDeviceOrientation: function(event) {
-				console.log('gamma', event.gamma);
-				console.log('beta', event.beta);
-				console.log('alpha', event.alpha);
-				console.log('----');
 
 				//  Update model
 				this._giro.set('alpha', event.alpha);
