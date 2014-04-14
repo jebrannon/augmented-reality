@@ -23,7 +23,7 @@ require.config({
     }
 });
 
-require(['app/router', 'app/config', 'gmaps'], function(Router, Config, GoogleMapsLoader) {
+require(['app/router', 'gmaps'], function(Router, GoogleMapsLoader) {
     GoogleMapsLoader.done(function(){
        Router.init();
      }).fail(function(){ 

@@ -1,10 +1,13 @@
-<!-- html/streetView/data.html -->
-<div id="streetViewData" class="street-view-data">
+<div class="street-view-data">
   <ul>
     <li><b>Position:</b>(<%= data.get('latitude') %>, <%= data.get('longitude') %>)</li>
     <li><b>Pano ID:</b><%= data.get('panid') %></li>
     <li><b>POV Heading:</b><%= data.get('heading') %></li>
     <li><b>POV Pitch:</b><%= data.get('pitch') %></li>
   </ul>
-  <ul id="links_list"></ul>
+  <ul>
+  <% _.each(data.get('links'), function (link, key) { %>
+    <li><b>Link <%= (key + 1) %>: </b><%= link.description %></li> 
+  <% }); %>
+  </ul>
 </div>

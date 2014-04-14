@@ -1,7 +1,11 @@
 html,
 body,
 ul,
-li {
+li,
+form,
+input,
+label {
+  border: none;
   margin: 0px;
   padding: 0px;
 }
@@ -14,24 +18,33 @@ li {
 html,
 body,
 #streetView {
-  height: 100%;
   font-family: sans-serif;
   font-size: 10px;
+  height: 100%;
 }
 
-#streetView .street-view-data {
-  background-color: rgba(255, 255, 255, .75);
-  line-height: 1.5;
-  padding: 10px;
+#streetViewTools {
+  line-height: 2;
   position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 300px;
+  right: 10px;
+  top: 10px;
+  width: 250px;
   z-index: 1000;
 }
 
-#streetView .street-view-data b {
+#streetViewTools .street-view-data,
+#streetViewTools .street-view-giro {
+  background-color: rgba(255, 255, 255, .75);
+  padding: 10px;
+}
+
+#streetViewTools .street-view-data b,
+#streetViewTools .street-view-giro b {
   display: inline-block;
-  padding-right: 20px;
-  width: 70px;
+  font-weight: 700;
+  width: 35%;
+}
+
+#streetViewTools .street-view-giro {
+  margin-top: 10px;
 }

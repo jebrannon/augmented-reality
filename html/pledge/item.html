@@ -1,9 +1,0 @@
-<!-- html/pledge/item.html -->
-<ul class="pledges">
-<% _.each(pledges, function (pledge) { %>
-  <li class="pledge-item" data-app-cid="<%= pledge.cid %>">
-  	<div class="image" style="background-image: url('<%= pledge.get('image').url %>')"></div>
-  	<p class="caption"><%= pledge.get('PageName') %></p>
-  </li> 
-<% }); %>
-</ul> 

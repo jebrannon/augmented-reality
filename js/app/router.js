@@ -3,9 +3,9 @@ define([
 	'underscore',
 	'backbone',
 	'app/collections/locations',
-	'app/views/streetview',
+	'app/views/streetView',
 	],
-	function($, _, Backbone, LocationsCollection, streetview) {
+	function($, _, Backbone, LocationsCollection, StreetView) {
 		var AppRouter = Backbone.Router.extend({
 			routes: {
 				'*actions': 'index'
@@ -14,7 +14,7 @@ define([
 				this.locations = data;
 			},
 			index: function() {
-				streetview.render(this.locations.first());
+				StreetView.render(this.locations.first());
 			}
 		});
 		var init = function() {
@@ -26,7 +26,8 @@ define([
 		      latitude: 40.719762,
 		      longitude: -74.006699,
 		      heading: -210,
-		      pitch: 0
+		      pitch: 0,
+		      links: null,
 		    },
 		    {
 		      slug: 'back-to-the-future-the-mcfly-house',
@@ -35,7 +36,8 @@ define([
 		      latitude: 34.239086,
 		      longitude: -118.433204,
 		      heading: -85,
-		      pitch: -4
+		      pitch: -4,
+		      links: null,
 		    },
 		    {
 		      slug: 'terminator-2-judgment-day-cyberdyne-building',
@@ -44,7 +46,8 @@ define([
 		      latitude: 37.476012,
 		      longitude: -121.937495,
 		      heading: 189.92,
-		      pitch: 94.55
+		      pitch: 94.55,
+		      links: null,
 		    }
 		  ]);
 		  var app_router = new AppRouter(this.locations);
